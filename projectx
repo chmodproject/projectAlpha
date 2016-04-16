@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+require_once "bootstrap.php";
+
+use core\CoreModel;
+
+$core = new CoreModel();
+use src\Product;
+if($argv[1] == "list"){
+	$products=$core->getAll("Product");
+	foreach ($products as $product) {
+	   		echo sprintf("-%s\n", $product->getName());
+	}
+}
+
+if($argv[1] == "find"){
+	$product=$core->getId("Product",$argv[2]);
+	echo $product->getName()."\n";
+}
+
+if($argv[1] == "create"){
+	$newProductName = $argv[2];
+	$product = new Product();
+	$product->setName($newProductName);
+	$products=$core->save($product,false);
+}
+
+if($argv[1] == "generate-entities"){
+	exec("vendor/bin/doctrine orm:generate:entities ".__DIR__."/src");
+}
+
+if($argv[1] == "create-schema"){
+	exec("vendor/bin/doctrine orm:schema-tool:create");
+}
+
+if($argv[1] == "update-schema"){
+	exec("vendor/bin/doctrine orm:schema-tool:update");
+}
+
+if($argv[1] == "drop-force"){
+	exec("vendor/bin/doctrine orm:schema-tool:drop --force");
+}
